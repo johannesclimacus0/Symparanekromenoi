@@ -1,0 +1,53 @@
+<?php
+
+use App\Http\Controllers\Web\SpaController;
+use App\Http\Controllers\Web\TwoFactorChallengeSpaController;
+use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| Named auth browser routes
+|--------------------------------------------------------------------------
+|
+| Fortify password-reset emails require a named `password.reset` route.
+| Laravel's Authenticate middleware also expects a named `login` route.
+| EnsureEmailIsVerified redirects to `verification.notice` when views are
+| disabled. With Fortify views disabled, these serve the SPA shell.
+|
+*/
+
+Route::get('/login', SpaController::class)->name('login');
+
+Route::get('/reset-password/{token}', SpaController::class)
+    ->name('password.reset');
+
+Route::get('/confirm-password', SpaController::class)
+    ->middleware('auth')
+    ->name('password.confirm');
+
+Route::get('/verify-email', SpaController::class)
+    ->middleware('auth')
+    ->name('verification.notice');
+
+Route::get('/two-factor-challenge', TwoFactorChallengeSpaController::class)
+    ->middleware('guest')
+    ->name('two-factor.login');
+
+/*
+|--------------------------------------------------------------------------
+| SPA shell
+|--------------------------------------------------------------------------
+|
+| Laravel serves a single Blade shell for frontend browser routes.
+| Vue Router owns client-side navigation. Backend/API/auth endpoints
+| must remain outside this catch-all, including Fortify signed email
+| verification URLs under /email/verify/{id}/{hash} and local disk
+| serving under /storage/{path}.
+|
+*/
+
+$apiPrefix = preg_quote(trim((string) config('app.api_prefix', 'api/v1'), '/'), '/');
+
+Route::get('/{path?}', SpaController::class)
+    ->where('path', '^(?!'.$apiPrefix.'(?:/|$)|sanctum(?:/|$)|up$|email(?:/|$)|storage(?:/|$)).*$')
+    ->name('spa');
