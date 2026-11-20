@@ -4,14 +4,14 @@ Some DevOps project for managing servers, projects, container deployments and ob
 
 ## Stack
 
-* PHP 8.5, Laravel 13
-* GraphQL/Lighthouse 
-* Vue 3 with Pinia 
-* PostgreSQL 18 
-* Redis/Horizon 
-* Laravel Reverb
+- PHP 8.5, Laravel 13
+- GraphQL/Lighthouse
+- Vue 3 with Pinia
+- PostgreSQL 18
+- Redis/Horizon
+- Laravel Reverb
 
-## Architecture 
+## Architecture
 
 A modular Laravel monolith with a Vue frontend. [ [architecture.md](docs/architecture.md) ]
 

@@ -4,7 +4,7 @@
 flowchart LR
     UI["Vue"]
     API["Laravel"]
-    
+
     subgraph Backend ["Backend"]
         Modules["Workspaces, servers, projects"]
         Deployments["Deployments and audit history"]
@@ -32,7 +32,7 @@ flowchart LR
 Planned modules:
 
 | Module                 | What belongs there                          |
-|------------------------|---------------------------------------------|
+| ---------------------- | ------------------------------------------- |
 | `Identity`             | App auth                                    |
 | `Workspaces`           | Resource ownership, membership, roles       |
 | `Servers`              | Server inventory, connections, availability |
