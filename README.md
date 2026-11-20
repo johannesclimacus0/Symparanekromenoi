@@ -1,64 +1,24 @@
-# Laravel Vue SPA Starter
+# Symparanekromenoi
 
-A starting point for my Laravel projects with a Vue SPA frontend.
+Some DevOps project for managing servers, projects, container deployments and observing the infrastructure.
 
-This repository is a fork of [muradyanvano/laravel-vue-spa-starter-kit](https://github.com/muradyanvano/laravel-vue-spa-starter-kit).
+## Stack
 
-## Start a new project
+* PHP 8.5, Laravel 13
+* GraphQL/Lighthouse 
+* Vue 3 with Pinia 
+* PostgreSQL 18 
+* Redis/Horizon 
+* Laravel Reverb
 
-### Option 1: Use the template
+## Architecture 
 
-1. Click **Use this template → Create a new repository** on this repository's GitHub page.
-2. Choose a name for your project and create the repository.
-3. Clone your new repository:
+A modular Laravel monolith with a Vue frontend. [ [architecture.md](docs/architecture.md) ]
 
-```bash
-git clone https://github.com/YOUR_USERNAME/YOUR_PROJECT.git
-cd YOUR_PROJECT
-```
+## TODO
 
-Your project starts with one commit containing the starter files.
-
-### Option 2: Clone with full history
-
-```bash
-git clone https://github.com/johannesclimacus0/laravel-vue-spa-starter-kit.git YOUR_PROJECT
-cd YOUR_PROJECT
-git remote remove origin
-git remote add origin https://github.com/YOUR_USERNAME/YOUR_PROJECT.git
-git push -u origin main
-```
-
-### Requirements
-
-- PHP 8.5 with Composer
-- Node.js 22 or 24 with npm
-- Docker with Compose
-
-### First run with Sail
-
-```bash
-composer install
-cp .env.example .env
-php artisan key:generate
-npm ci
-./vendor/bin/sail up -d
-./vendor/bin/sail artisan migrate
-npm run dev
-```
-
-The Sail stack includes PostgreSQL, Redis, Mailpit, Horizon, Reverb, and a scheduler.
-
-## Features
-
-- Auth: Fortify, Sanctum, registration, login, password reset, email verification, 2FA, recovery codes
-- GraphQL: Lighthouse API for current user, profile, password, security, time zone, and account deletion
-- Frontend: Vue 3, TypeScript, Vue Router, Pinia, Axios, Tailwind CSS, Wayfinder
-- Realtime: Reverb and Echo configuration
-- Checks: Pest, Vitest, PHPStan, Pint, CI
-
-## GraphQL/Lighthouse
-
-## Credits
-
-Based on [muradyanvano/laravel-vue-spa-starter-kit](https://github.com/muradyanvano/laravel-vue-spa-starter-kit).
+- [ ] Server and project management
+- [ ] Сontainer deployments
+- [ ] Deployment history and logs
+- [ ] Infrastructure monitoring
+- [ ] Dockerfile generator
