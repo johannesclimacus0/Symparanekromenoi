@@ -143,7 +143,8 @@ test('GraphQL account deletion requires the current password and logs out', func
         'query' => 'mutation { deleteMyAccount(input: { password: "password" }) }',
     ])->assertExactJson(['data' => ['deleteMyAccount' => true]])->assertSessionMissing('marker');
     $this->assertGuest('web');
-    expect($user->fresh())->toBeNull()->and($other->fresh())->not->toBeNull();
+    $this->assertSoftDeleted('users', ['id' => $user->id]);
+    expect($other->fresh())->not->toBeNull();
 });
 
 test('GraphQL respects disabled Fortify profile and password features', function (string $query) {
@@ -184,7 +185,7 @@ test('GraphQL deletion accepts the exact password including whitespace', functio
         'variables' => ['input' => ['password' => ' current-password ']],
     ])->assertExactJson(['data' => ['deleteMyAccount' => true]]);
 
-    expect($user->fresh())->toBeNull();
+    $this->assertSoftDeleted('users', ['id' => $user->id]);
     $this->assertGuest('web');
 });
 
@@ -250,5 +251,5 @@ test('GraphQL cannot reuse the deleted user in a subsequent mutation field', fun
         'query' => 'mutation { deleteMyAccount(input: { password: "password" }) updateMyProfile(input: { name: "Restored", email: "restored@example.com" }) { id } }',
     ])->assertJsonPath('errors.0.extensions.code', 'UNAUTHENTICATED');
 
-    expect($user->fresh())->toBeNull();
+    $this->assertSoftDeleted('users', ['id' => $user->id]);
 });
