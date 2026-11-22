@@ -33,6 +33,7 @@
         "nuwave/lighthouse": "^6.74"
     },
     "require-dev": {
+        "barryvdh/laravel-ide-helper": "^3.8",
         "fakerphp/faker": "^1.24",
         "johannesclimacus/laravel-tui": "@alpha",
         "larastan/larastan": "^3.9",

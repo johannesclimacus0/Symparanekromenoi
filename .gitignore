@@ -49,3 +49,5 @@ schema-directives.graphql
 
 /graphql/generated/
 /resources/js/graphql/generated/
+
+_ide_helper.php
