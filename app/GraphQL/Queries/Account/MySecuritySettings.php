@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\GraphQL\Queries;
+namespace App\GraphQL\Queries\Account;
 
 use App\Actions\Settings\GetUserSecuritySettings;
 use App\Models\User;

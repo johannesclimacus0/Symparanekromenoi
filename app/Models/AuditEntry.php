@@ -12,6 +12,17 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property-read User|null $actor
+ * @property-read Workspace|null $workspace
+ *
+ * @method static \Database\Factories\AuditEntryFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AuditEntry newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AuditEntry newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|AuditEntry query()
+ *
+ * @mixin \Eloquent
+ */
 #[WithoutTimestamps]
 #[Fillable(['workspace_id', 'actor_id', 'action', 'subject_type', 'subject_id', 'metadata', 'occurred_at'])]
 class AuditEntry extends Model

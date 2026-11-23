@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\GraphQL\Mutations;
+namespace App\GraphQL\Mutations\Account;
 
 use App\Actions\Settings\DeleteUserAccount;
 use App\Models\User;

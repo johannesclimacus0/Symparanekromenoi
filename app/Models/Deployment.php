@@ -8,11 +8,28 @@ use App\Concerns\HasUuidRouteKey;
 use App\Enums\DeploymentStatus;
 use Database\Factories\DeploymentFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property DeploymentStatus $status
+ * @property-read Environment|null $environment
+ * @property-read Collection<int, DeploymentLogEntry> $logEntries
+ * @property-read int|null $log_entries_count
+ * @property-read User|null $requestedBy
+ * @property-read Server|null $server
+ * @property-read Workspace|null $workspace
+ *
+ * @method static \Database\Factories\DeploymentFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Deployment newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Deployment newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Deployment query()
+ *
+ * @mixin \Eloquent
+ */
 #[Fillable(['workspace_id', 'environment_id', 'server_id', 'requested_by_id', 'status', 'snapshot', 'failure_code', 'failure_message', 'started_at', 'finished_at'])]
 class Deployment extends Model
 {

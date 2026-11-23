@@ -12,6 +12,19 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @property-read Workspace|null $workspace
+ *
+ * @method static \Database\Factories\ServerFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Server newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Server newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Server onlyTrashed()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Server query()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Server withTrashed(bool $withTrashed = true)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Server withoutTrashed()
+ *
+ * @mixin \Eloquent
+ */
 #[Fillable(['workspace_id', 'name', 'address', 'description'])]
 class Server extends Model
 {

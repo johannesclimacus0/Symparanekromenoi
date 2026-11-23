@@ -8,6 +8,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -31,14 +32,21 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  * @property string|null $two_factor_recovery_codes
  * @property CarbonImmutable|null $two_factor_confirmed_at
  * @property string $timezone
+ * @property CarbonImmutable|null $deleted_at
  * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
+ * @property-read Collection<int, WorkspaceMembership> $workspaceMemberships
+ * @property-read int|null $workspace_memberships_count
+ * @property-read Collection<int, Workspace> $workspaces
+ * @property-read int|null $workspaces_count
  *
- * @method static UserFactory factory($count = null, $state = [])
+ * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
  * @method static Builder<static>|User newModelQuery()
  * @method static Builder<static>|User newQuery()
+ * @method static Builder<static>|User onlyTrashed()
  * @method static Builder<static>|User query()
  * @method static Builder<static>|User whereCreatedAt($value)
+ * @method static Builder<static>|User whereDeletedAt($value)
  * @method static Builder<static>|User whereEmail($value)
  * @method static Builder<static>|User whereEmailVerifiedAt($value)
  * @method static Builder<static>|User whereId($value)
@@ -50,6 +58,8 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
  * @method static Builder<static>|User whereTwoFactorRecoveryCodes($value)
  * @method static Builder<static>|User whereTwoFactorSecret($value)
  * @method static Builder<static>|User whereUpdatedAt($value)
+ * @method static Builder<static>|User withTrashed(bool $withTrashed = true)
+ * @method static Builder<static>|User withoutTrashed()
  *
  * @mixin \Eloquent
  */
