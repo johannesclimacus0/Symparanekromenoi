@@ -1,0 +1,31 @@
+extend type Query {
+    server(id: ID!): Server @guard @field(resolver: "App\\GraphQL\\Queries\\Server\\Server")
+    servers(workspaceId: ID!): [Server!]! @guard @paginate(type: CONNECTION, builder: "App\\GraphQL\\Queries\\Server\\Servers", defaultCount: 20, maxCount: 100)
+}
+
+extend type Mutation {
+    createServer(input: CreateServerInput!): Server! @guard @verified @field(resolver: "App\\GraphQL\\Mutations\\Server\\CreateServer")
+    updateServer(input: UpdateServerInput!): Server! @guard @verified @field(resolver: "App\\GraphQL\\Mutations\\Server\\UpdateServer")
+    deleteServer(id: ID!): Boolean! @guard @verified @field(resolver: "App\\GraphQL\\Mutations\\Server\\DeleteServer")
+}
+
+type Server {
+    id: ID! @rename(attribute: "uuid")
+    name: String!
+    address: String!
+    description: String
+}
+
+input CreateServerInput {
+    workspaceId: ID!
+    name: String! @trim
+    address: String! @trim
+    description: String @trim
+}
+
+input UpdateServerInput {
+    id: ID!
+    name: String! @trim
+    address: String! @trim
+    description: String @trim
+}

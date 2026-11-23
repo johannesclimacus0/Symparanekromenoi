@@ -1,0 +1,28 @@
+extend type Query {
+    project(id: ID!): Project @guard @field(resolver: "App\\GraphQL\\Queries\\Project\\Project")
+    projects(workspaceId: ID!): [Project!]! @guard @paginate(type: CONNECTION, builder: "App\\GraphQL\\Queries\\Project\\Projects", defaultCount: 20, maxCount: 100)
+}
+
+extend type Mutation {
+    createProject(input: CreateProjectInput!): Project! @guard @verified @field(resolver: "App\\GraphQL\\Mutations\\Project\\CreateProject")
+    updateProject(input: UpdateProjectInput!): Project! @guard @verified @field(resolver: "App\\GraphQL\\Mutations\\Project\\UpdateProject")
+    deleteProject(id: ID!): Boolean! @guard @verified @field(resolver: "App\\GraphQL\\Mutations\\Project\\DeleteProject")
+}
+
+type Project {
+    id: ID! @rename(attribute: "uuid")
+    name: String!
+    description: String
+}
+
+input CreateProjectInput {
+    workspaceId: ID!
+    name: String! @trim
+    description: String @trim
+}
+
+input UpdateProjectInput {
+    id: ID!
+    name: String! @trim
+    description: String @trim
+}
