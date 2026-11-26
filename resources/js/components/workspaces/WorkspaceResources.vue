@@ -38,6 +38,29 @@ const controller = new AbortController();
 const editing = ref<Row | 'new' | null>(null);
 const { processing, failure, run } = useWorkspaceRequest();
 
+const pendingKeys = new Map<string, string>();
+const receipts = ref<
+    Record<string, api.RequestDeploymentDryRunMutation['requestDeploymentDryRun']>
+>({});
+
+async function requestDryRun(row: Row): Promise<void> {
+    await run(async (signal) => {
+        const environmentId = row.id;
+        const key = pendingKeys.get(environmentId) ?? crypto.randomUUID();
+
+        pendingKeys.set(environmentId, key);
+
+        const data = await graphql(
+            api.RequestDeploymentDryRunDocument,
+            { input: { environmentId, idempotencyKey: key } },
+            { csrf: true, signal },
+        );
+
+        receipts.value[environmentId] = data.requestDeploymentDryRun;
+        pendingKeys.delete(environmentId);
+    });
+}
+
 async function refresh() {
     editing.value = null;
     rows.value = [];
@@ -193,6 +216,14 @@ onUnmounted(() => controller.abort());
                         class="flex flex-wrap gap-2 sm:col-span-2"
                     >
                         <button
+                            v-if="section === 'environments'"
+                            type="button"
+                            :disabled="busy || processing || !row.serverId"
+                            @click="requestDryRun(row)"
+                        >
+                            dry run
+                        </button>
+                        <button
                             v-if="section !== 'invitations'"
                             :disabled="busy || processing"
                             @click="editing = row"
@@ -210,6 +241,12 @@ onUnmounted(() => controller.abort());
                             {{ section === 'invitations' ? 'revoke' : 'remove' }}
                         </button>
                     </div>
+                    <p
+                        v-if="section === 'environments' && receipts[row.id]"
+                        class="text-muted break-words sm:col-span-2"
+                    >
+                        dry run {{ receipts[row.id]?.id }} / {{ receipts[row.id]?.status }}
+                    </p>
                 </li>
             </ul>
             <FormFieldError v-if="error" :message="error" />
