@@ -12,8 +12,10 @@ class EnvironmentPolicy
 {
     public function requestDeploymentDryRun(User $user, Environment $environment): bool
     {
-        return $user->hasVerifiedEmail()
-            && $environment->project->workspace->memberships()
+        $workspace = $environment->project?->workspace;
+
+        return $workspace !== null && $user->hasVerifiedEmail()
+            && $workspace->memberships()
                 ->where('user_id', $user->id)
                 ->whereIn('role', [
                     WorkspaceRole::Owner->value,

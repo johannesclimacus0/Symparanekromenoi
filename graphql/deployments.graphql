@@ -33,8 +33,8 @@ type DeploymentTargetSnapshot {
 }
 
 input RequestDeploymentDryRunInput {
-    environmentId: ID!
-    idempotencyKey: String!
+    environmentId: ID! @rules(apply: ["required", "uuid"])
+    idempotencyKey: String! @trim @rules(apply: ["required", "string", "max:255"])
 }
 
 extend type Mutation {

@@ -17,7 +17,7 @@ use Illuminate\Validation\ValidationException;
 
 final class RequestDeploymentDryRun
 {
-    public function handle(User $user, string $environmentUuid, $idempotencyKey): Deployment {
+    public function handle(User $user, string $environmentUuid, string $idempotencyKey): Deployment {
         $environment = Environment::query()
             ->where('uuid', $environmentUuid)
             ->whereHas('project.workspace.memberships', fn ($query) =>
@@ -83,29 +83,31 @@ final class RequestDeploymentDryRun
 
             $this->ensureSameEnvironment($deployment, $environment);
 
-            if ($deployment->wasRecentlyCreated) {
-                DeploymentLogEntry::create([
-                    'deployment_id' => $deployment->id,
-                    'sequence' => 1,
-                    'stream' => 'system',
-                    'message' => 'Deployment requested.',
-                    'recorded_at' => now(),
-                ]);
-
-                AuditEntry::create([
-                    'workspace_id' => $deployment->workspace_id,
-                    'actor_id' => $deployment->requested_by_id,
-                    'action' => 'deployment.requested',
-                    'subject_type' => 'deployment',
-                    'subject_id' => $deployment->uuid,
-                    'metadata' => [
-                        'mode' => 'dry_run',
-                        'environment_uuid' => $environment->uuid,
-                        'server_uuid' => $server->uuid,
-                    ],
-                    'occurred_at' => now(),
-                ]);
+            if (! $deployment->wasRecentlyCreated) {
+                return $deployment;
             }
+
+            DeploymentLogEntry::create([
+                'deployment_id' => $deployment->id,
+                'sequence' => 1,
+                'stream' => 'system',
+                'message' => 'Deployment requested.',
+                'recorded_at' => now(),
+            ]);
+
+            AuditEntry::create([
+                'workspace_id' => $deployment->workspace_id,
+                'actor_id' => $deployment->requested_by_id,
+                'action' => 'deployment.requested',
+                'subject_type' => 'deployment',
+                'subject_id' => $deployment->uuid,
+                'metadata' => [
+                    'mode' => 'dry_run',
+                    'environment_uuid' => $environment->uuid,
+                    'server_uuid' => $server->uuid,
+                ],
+                'occurred_at' => now(),
+            ]);
 
             RunDeploymentDryRun::dispatch($deployment->id)
                 ->onQueue('default')

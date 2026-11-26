@@ -13,6 +13,7 @@ final class RequestDeploymentDryRun
         private Action $action,
     ) {}
 
+    /** @param array{input: array{environmentId: string, idempotencyKey: string}} $args */
     public function __invoke(null $_, array $args): Deployment
     {
         return $this->action->handle(
