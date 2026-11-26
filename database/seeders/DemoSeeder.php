@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
-use App\Enums\DeploymentStatus;
 use App\Enums\WorkspaceRole;
 use App\Models\Deployment;
 use App\Models\DeploymentLogEntry;
