@@ -49,7 +49,7 @@ async function onSubmit(): Promise<void> {
     <section class="space-y-6">
         <header>
             <h2 class="text-lg font-semibold">Update password</h2>
-            <p class="text-sm text-neutral-600">
+            <p class="text-muted text-sm">
                 Use a long, random password to help keep your account secure.
             </p>
         </header>

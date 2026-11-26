@@ -79,7 +79,7 @@ onUnmounted(() => {
             aria-label="Loading security settings"
             data-testid="security-skeleton"
         >
-            <p class="text-sm text-neutral-600">Loading security settings…</p>
+            <p class="text-muted text-sm">Loading security settings…</p>
         </div>
 
         <FormFieldError v-if="phase === 'error' && loadError" :message="loadError" />

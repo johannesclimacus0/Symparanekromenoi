@@ -25,7 +25,7 @@ function onRememberChange(event: Event): void {
 <template>
     <div
         v-if="flashStatus || form.status"
-        class="mb-4 text-center text-sm font-medium text-green-600"
+        class="text-success mb-4 text-center text-sm font-medium"
     >
         {{ flashStatus ?? form.status }}
     </div>
@@ -116,7 +116,7 @@ function onRememberChange(event: Event): void {
             />
         </div>
 
-        <div v-if="canRegister" class="text-center text-sm text-neutral-600">
+        <div v-if="canRegister" class="text-muted text-center text-sm">
             Don't have an account?
             <a href="/register" :tabindex="5">Sign up</a>
         </div>

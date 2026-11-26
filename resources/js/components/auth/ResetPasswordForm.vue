@@ -27,7 +27,7 @@ import AuthSubmitButton from '@/components/auth/AuthSubmitButton.vue';
                 <p
                     v-if="props.form.errors.email"
                     :id="fieldErrorId('email')"
-                    class="text-sm text-red-600"
+                    class="text-danger text-sm"
                     role="alert"
                 >
                     {{ props.form.errors.email }}
@@ -52,7 +52,7 @@ import AuthSubmitButton from '@/components/auth/AuthSubmitButton.vue';
                 <p
                     v-if="props.form.errors.password"
                     :id="fieldErrorId('password')"
-                    class="text-sm text-red-600"
+                    class="text-danger text-sm"
                     role="alert"
                 >
                     {{ props.form.errors.password }}
@@ -76,7 +76,7 @@ import AuthSubmitButton from '@/components/auth/AuthSubmitButton.vue';
                 <p
                     v-if="props.form.errors.password_confirmation"
                     :id="fieldErrorId('password_confirmation')"
-                    class="text-sm text-red-600"
+                    class="text-danger text-sm"
                     role="alert"
                 >
                     {{ props.form.errors.password_confirmation }}

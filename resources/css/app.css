@@ -1,15 +1,60 @@
 @import 'tailwindcss';
 
+@theme {
+    --color-canvas: #f6f2e8;
+    --color-panel: #ede8dc;
+    --color-raised: #e0dacb;
+    --color-line: #817a6d;
+    --color-ink: #272622;
+    --color-muted: #57564f;
+    --color-accent: #943927;
+    --color-accent-hover: #752c20;
+    --color-success: #385d45;
+    --color-danger: #90203e;
+}
+
 @layer base {
-    body {
-        @apply bg-white font-sans text-neutral-900;
+    :root {
+        @apply accent-accent scheme-light;
     }
 
-    input:not([type='checkbox']) {
-        @apply w-full border border-neutral-300 bg-white px-3 py-2 text-sm outline-none focus:border-neutral-700;
+    body {
+        @apply bg-canvas text-ink min-h-screen font-mono;
+    }
+
+    input:not([type='checkbox']),
+    select {
+        @apply border-line bg-canvas text-ink w-full border px-3 py-2 text-sm;
     }
 
     button {
-        @apply cursor-pointer border border-neutral-300 bg-white px-4 py-2 text-sm text-neutral-900 hover:bg-neutral-50 disabled:cursor-not-allowed disabled:opacity-50;
+        @apply border-line bg-panel text-ink hover:bg-raised cursor-pointer border px-4 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-50;
+    }
+
+    :focus-visible {
+        @apply outline-accent outline-2 outline-offset-3 outline-solid;
+    }
+
+    a:hover {
+        @apply text-accent;
+    }
+}
+
+@utility terminal-actions {
+    & :is(button, a) {
+        @apply text-accent rounded-none border-0 bg-transparent px-1 py-[0.4rem] lowercase;
+        &::before {
+            content: '[ ' / '';
+        }
+        &::after {
+            content: ' ]' / '';
+        }
+    }
+    & a[aria-current='page'] {
+        @apply border-y-2 border-transparent bg-clip-padding py-[calc(0.4rem-2px)];
+    }
+    & :is(button:enabled, a):hover,
+    & a[aria-current='page'] {
+        @apply bg-accent text-canvas;
     }
 }

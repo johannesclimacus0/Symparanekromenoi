@@ -40,7 +40,7 @@ import AuthSubmitButton from '@/components/auth/AuthSubmitButton.vue';
                     <p
                         v-if="props.form.errors.code"
                         :id="fieldErrorId('code')"
-                        class="text-sm text-red-600"
+                        class="text-danger text-sm"
                         role="alert"
                     >
                         {{ props.form.errors.code }}
@@ -52,11 +52,11 @@ import AuthSubmitButton from '@/components/auth/AuthSubmitButton.vue';
                     :disabled="code.length < 6"
                     label="Continue"
                 />
-                <div class="text-center text-sm text-neutral-600">
+                <div class="text-muted text-center text-sm">
                     <span>or you can </span>
                     <button
                         type="button"
-                        class="text-neutral-900 underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current!"
+                        class="text-ink underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current!"
                         @click="emit('toggleRecovery')"
                     >
                         {{ authConfigContent.buttonText }}
@@ -84,7 +84,7 @@ import AuthSubmitButton from '@/components/auth/AuthSubmitButton.vue';
                     <p
                         v-if="props.form.errors.recovery_code"
                         :id="fieldErrorId('recovery_code')"
-                        class="text-sm text-red-600"
+                        class="text-danger text-sm"
                         role="alert"
                     >
                         {{ props.form.errors.recovery_code }}
@@ -96,11 +96,11 @@ import AuthSubmitButton from '@/components/auth/AuthSubmitButton.vue';
                     label="Continue"
                 />
 
-                <div class="text-center text-sm text-neutral-600">
+                <div class="text-muted text-center text-sm">
                     <span>or you can </span>
                     <button
                         type="button"
-                        class="text-neutral-900 underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current!"
+                        class="text-ink underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current!"
                         @click="emit('toggleRecovery')"
                     >
                         {{ authConfigContent.buttonText }}

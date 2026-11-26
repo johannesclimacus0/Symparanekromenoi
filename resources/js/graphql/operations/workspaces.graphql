@@ -1,0 +1,67 @@
+query MyWorkspace($first: Int, $after: String) {
+    myWorkspaces(first: $first, after: $after) {
+        edges {
+            cursor
+            node {
+                id
+                name
+            }
+        }
+        pageInfo {
+            hasNextPage
+            endCursor
+        }
+    }
+}
+
+mutation CreateWorkspace($input: CreateWorkspaceInput!) {
+    createWorkspace(input: $input) {
+        id
+        name
+    }
+}
+
+mutation UpdateWorkspace($input: UpdateWorkspaceInput!) {
+    updateWorkspace(input: $input) {
+        id
+        name
+    }
+}
+
+mutation InviteWorkspaceMember($input: InviteWorkspaceMemberInput!) {
+    inviteWorkspaceMember(input: $input) {
+        id
+    }
+}
+
+mutation RevokeWorkspaceInvitation($input: RevokeWorkspaceInvitationInput!) {
+    revokeWorkspaceInvitation(input: $input)
+}
+
+mutation ChangeWorkspaceMemberRole($input: ChangeWorkspaceMemberRoleInput!) {
+    changeWorkspaceMemberRole(input: $input)
+}
+
+mutation RemoveWorkspaceMember($input: WorkspaceMemberInput!) {
+    removeWorkspaceMember(input: $input)
+}
+
+mutation TransferWorkspaceOwnership($input: WorkspaceMemberInput!) {
+    transferWorkspaceOwnership(input: $input)
+}
+
+mutation LeaveWorkspace($input: WorkspaceIdInput!) {
+    leaveWorkspace(input: $input)
+}
+
+mutation RestoreWorkspace($input: WorkspaceIdInput!) {
+    restoreWorkspace(input: $input)
+}
+
+mutation DeleteWorkspace($input: WorkspaceIdInput!) {
+    deleteWorkspace(input: $input)
+}
+
+mutation AcceptWorkspaceInvitation($token: String!) {
+    acceptWorkspaceInvitation(token: $token)
+}

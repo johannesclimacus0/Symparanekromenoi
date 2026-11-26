@@ -116,7 +116,7 @@ const emit = defineEmits<{ submit: [] }>();
             />
         </div>
 
-        <div class="text-center text-sm text-neutral-600">
+        <div class="text-muted text-center text-sm">
             Already have an account?
             <a href="/login" :tabindex="6">Log in</a>
         </div>
