@@ -223,14 +223,14 @@ return [
 
     'namespaces' => [
         'models' => ['App', 'App\\Models'],
-        'queries' => 'App\\GraphQL\\Queries',
-        'mutations' => 'App\\GraphQL\\Mutations',
+        'queries' => ['App\\GraphQL\\Queries', 'App\\GraphQL\\Queries\\Account', 'App\\GraphQL\\Queries\\Workspace'],
+        'mutations' => ['App\\GraphQL\\Mutations', 'App\\GraphQL\\Mutations\\Account', 'App\\GraphQL\\Mutations\\Workspace'],
         'subscriptions' => 'App\\GraphQL\\Subscriptions',
         'types' => 'App\\GraphQL\\Types',
         'interfaces' => 'App\\GraphQL\\Interfaces',
         'unions' => 'App\\GraphQL\\Unions',
         'scalars' => 'App\\GraphQL\\Scalars',
-        'directives' => 'App\\GraphQL\\Directives',
+        'directives' => ['App\\GraphQL\\Directives', 'App\\GraphQL\\Directives\\Account'],
         'validators' => 'App\\GraphQL\\Validators',
     ],
 

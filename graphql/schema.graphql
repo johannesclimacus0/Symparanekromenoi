@@ -1,3 +1,7 @@
+#import environments.graphql
+#import projects.graphql
+#import servers.graphql
+#import workspaces.graphql
 #import scalars.graphql
 #import preferences.graphql
 #import security.graphql

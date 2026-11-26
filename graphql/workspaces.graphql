@@ -1,0 +1,112 @@
+extend type Query {
+    workspace(id: ID!): Workspace @guard
+    workspaceInvitations(id: ID!): [WorkspaceInvitation!]!
+        @guard
+        @verified
+        @paginate(
+            type: CONNECTION
+            builder: "App\\GraphQL\\Queries\\Workspace\\WorkspaceInvitations"
+            defaultCount: 20
+            maxCount: 100
+        )
+    workspaceMembers(id: ID!): [WorkspaceMembership!]!
+        @guard
+        @paginate(
+            type: CONNECTION
+            builder: "App\\GraphQL\\Queries\\Workspace\\WorkspaceMembers"
+            defaultCount: 20
+            maxCount: 100
+        )
+    myWorkspaces(first: Int = 20, after: String): WorkspaceConnection! @guard
+}
+
+extend type Mutation {
+    createWorkspace(input: CreateWorkspaceInput!): Workspace! @guard @verified
+    inviteWorkspaceMember(input: InviteWorkspaceMemberInput!): WorkspaceInvitation! @guard @verified
+    acceptWorkspaceInvitation(token: String!): Boolean! @guard @verified
+    revokeWorkspaceInvitation(input: RevokeWorkspaceInvitationInput!): Boolean! @guard @verified
+    updateWorkspace(input: UpdateWorkspaceInput!): Workspace! @guard @verified
+    deleteWorkspace(input: WorkspaceIdInput!): Boolean! @guard @verified
+    restoreWorkspace(input: WorkspaceIdInput!): Boolean! @guard @verified
+    leaveWorkspace(input: WorkspaceIdInput!): Boolean! @guard @verified
+    removeWorkspaceMember(input: WorkspaceMemberInput!): Boolean! @guard @verified
+    transferWorkspaceOwnership(input: WorkspaceMemberInput!): Boolean! @guard @verified
+    changeWorkspaceMemberRole(input: ChangeWorkspaceMemberRoleInput!): Boolean! @guard @verified
+}
+
+type Workspace {
+    id: ID! @rename(attribute: "uuid")
+    name: String!
+}
+
+input CreateWorkspaceInput {
+    name: String! @trim
+}
+
+input UpdateWorkspaceInput {
+    id: ID!
+    name: String! @trim
+}
+
+input WorkspaceIdInput {
+    id: ID!
+}
+
+input WorkspaceMemberInput {
+    id: ID!
+    memberId: ID!
+}
+
+enum WorkspaceMemberRole {
+    ADMIN @enum(value: "admin")
+    DEVELOPER @enum(value: "developer")
+    VIEWER @enum(value: "viewer")
+}
+
+input ChangeWorkspaceMemberRoleInput {
+    id: ID!
+    memberId: ID!
+    role: WorkspaceMemberRole!
+}
+
+type WorkspaceInvitation {
+    id: ID! @rename(attribute: "uuid")
+    email: String!
+    expiresAt: DateTime! @rename(attribute: "expires_at")
+}
+
+input InviteWorkspaceMemberInput {
+    id: ID!
+    email: String! @trim
+    role: WorkspaceMemberRole!
+}
+
+input RevokeWorkspaceInvitationInput {
+    id: ID!
+    invitationId: ID!
+}
+
+type WorkspaceMembership {
+    id: ID! @rename(attribute: "uuid")
+    role: String! @method(name: "roleValue")
+    user: WorkspaceMemberUser! @belongsTo
+}
+
+type WorkspaceMemberUser {
+    name: String!
+}
+
+type WorkspaceConnection {
+    edges: [WorkspaceEdge!]!
+    pageInfo: WorkspacePageInfo!
+}
+
+type WorkspaceEdge {
+    node: Workspace!
+    cursor: String!
+}
+
+type WorkspacePageInfo {
+    hasNextPage: Boolean!
+    endCursor: String
+}

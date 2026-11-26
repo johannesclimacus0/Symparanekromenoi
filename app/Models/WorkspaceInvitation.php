@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Concerns\HasUuidRouteKey;
 use App\Enums\WorkspaceRole;
+use Carbon\CarbonImmutable;
 use Database\Factories\WorkspaceInvitationFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
@@ -13,6 +14,21 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property WorkspaceRole $role
+ * @property CarbonImmutable $expires_at
+ * @property CarbonImmutable|null $accepted_at
+ * @property CarbonImmutable|null $revoked_at
+ * @property-read User|null $invitedBy
+ * @property-read Workspace|null $workspace
+ *
+ * @method static \Database\Factories\WorkspaceInvitationFactory factory($count = null, $state = [])
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkspaceInvitation newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkspaceInvitation newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|WorkspaceInvitation query()
+ *
+ * @mixin \Eloquent
+ */
 #[Fillable(['workspace_id', 'invited_by_id', 'email', 'role', 'token_hash', 'expires_at', 'accepted_at', 'revoked_at'])]
 #[Hidden(['token_hash'])]
 class WorkspaceInvitation extends Model
