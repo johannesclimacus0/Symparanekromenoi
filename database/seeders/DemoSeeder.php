@@ -30,8 +30,6 @@ class DemoSeeder extends Seeder
             'email' => 'member@example.com',
         ]);
 
-        $roles =
-
         Workspace::factory()
             ->count(30)
             ->has(WorkspaceMembership::factory()->for($owner)->state(['role' => WorkspaceRole::Owner]), 'memberships')
