@@ -2,7 +2,9 @@ import { graphql } from '@/graphql/client';
 import {
     CreateWorkspaceDocument,
     type CreateWorkspaceInput,
-    MyWorkspaceDocument, UpdateWorkspaceDocument, UpdateWorkspaceInput,
+    MyWorkspaceDocument,
+    UpdateWorkspaceDocument,
+    UpdateWorkspaceInput,
 } from '@/graphql/generated/graphql';
 
 export class WorkspaceService {
@@ -21,7 +23,7 @@ export class WorkspaceService {
     async updateWorkspace(input: UpdateWorkspaceInput) {
         const data = await graphql(UpdateWorkspaceDocument, { input }, { csrf: true });
 
-        return data.updateWorkspace
+        return data.updateWorkspace;
     }
 }
 

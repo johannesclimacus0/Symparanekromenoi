@@ -40,7 +40,7 @@ import AuthSubmitButton from '@/components/auth/AuthSubmitButton.vue';
                     <p
                         v-if="props.form.errors.code"
                         :id="fieldErrorId('code')"
-                        class="text-sm text-danger"
+                        class="text-danger text-sm"
                         role="alert"
                     >
                         {{ props.form.errors.code }}
@@ -52,7 +52,7 @@ import AuthSubmitButton from '@/components/auth/AuthSubmitButton.vue';
                     :disabled="code.length < 6"
                     label="Continue"
                 />
-                <div class="text-center text-sm text-muted">
+                <div class="text-muted text-center text-sm">
                     <span>or you can </span>
                     <button
                         type="button"
@@ -84,7 +84,7 @@ import AuthSubmitButton from '@/components/auth/AuthSubmitButton.vue';
                     <p
                         v-if="props.form.errors.recovery_code"
                         :id="fieldErrorId('recovery_code')"
-                        class="text-sm text-danger"
+                        class="text-danger text-sm"
                         role="alert"
                     >
                         {{ props.form.errors.recovery_code }}
@@ -96,7 +96,7 @@ import AuthSubmitButton from '@/components/auth/AuthSubmitButton.vue';
                     label="Continue"
                 />
 
-                <div class="text-center text-sm text-muted">
+                <div class="text-muted text-center text-sm">
                     <span>or you can </span>
                     <button
                         type="button"

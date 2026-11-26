@@ -7,7 +7,7 @@ import AuthSubmitButton from '@/components/auth/AuthSubmitButton.vue';
 </script>
 
 <template>
-    <div v-if="props.form.status" class="mb-4 text-center text-sm font-medium text-success">
+    <div v-if="props.form.status" class="text-success mb-4 text-center text-sm font-medium">
         {{ props.form.status }}
     </div>
 
@@ -30,7 +30,7 @@ import AuthSubmitButton from '@/components/auth/AuthSubmitButton.vue';
                 <p
                     v-if="props.form.errors.email"
                     :id="fieldErrorId('email')"
-                    class="text-sm text-danger"
+                    class="text-danger text-sm"
                     role="alert"
                 >
                     {{ props.form.errors.email }}
@@ -47,7 +47,7 @@ import AuthSubmitButton from '@/components/auth/AuthSubmitButton.vue';
             </div>
         </form>
 
-        <div class="space-x-1 text-center text-sm text-muted">
+        <div class="text-muted space-x-1 text-center text-sm">
             <span>Or, return to</span>
             <a href="/login">log in</a>
         </div>

@@ -53,7 +53,7 @@ onUnmounted(() => controller.abort());
 <template>
     <section>
         <h2 class="text-lg font-semibold">Appearance</h2>
-        <p v-if="phase === 'loading'" class="mt-2 text-sm text-muted" aria-live="polite">
+        <p v-if="phase === 'loading'" class="text-muted mt-2 text-sm" aria-live="polite">
             Loading preferences…
         </p>
         <FormFieldError
@@ -66,7 +66,7 @@ onUnmounted(() => controller.abort());
             <select
                 id="timezone"
                 v-model="selectedTimezone"
-                class="w-full rounded border border-line bg-panel px-3 py-2 text-sm"
+                class="border-line bg-panel w-full rounded border px-3 py-2 text-sm"
                 @change="successMessage = null"
             >
                 <option v-for="timezone in timezones" :key="timezone" :value="timezone">
@@ -75,7 +75,7 @@ onUnmounted(() => controller.abort());
             </select>
             <button
                 type="submit"
-                class="rounded border border-line px-3 py-2 text-sm hover:bg-raised disabled:cursor-not-allowed disabled:opacity-50"
+                class="border-line hover:bg-raised rounded border px-3 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-50"
                 :disabled="
                     preferencesStore.isSaving ||
                     selectedTimezone === preferencesStore.preferences?.timezone

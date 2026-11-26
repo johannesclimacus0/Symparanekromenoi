@@ -118,15 +118,10 @@ onUnmounted(() => twoFactor.clearTwoFactorAuthData());
 </script>
 
 <template>
-    <section
-        v-if="props.settings.canManageTwoFactor"
-        class="space-y-4 border-t border-line pt-6"
-    >
+    <section v-if="props.settings.canManageTwoFactor" class="border-line space-y-4 border-t pt-6">
         <header>
             <h2 class="text-lg font-semibold">Two-factor authentication</h2>
-            <p class="text-sm text-muted">
-                Add a code from an authenticator app when you sign in.
-            </p>
+            <p class="text-muted text-sm">Add a code from an authenticator app when you sign in.</p>
         </header>
         <FormFieldError v-if="actionError" :message="actionError" />
         <template v-if="props.settings.twoFactorEnabled">
@@ -142,10 +137,7 @@ onUnmounted(() => twoFactor.clearTwoFactorAuthData());
             >
                 Regenerate codes
             </button>
-            <ul
-                v-if="showRecoveryCodes"
-                class="space-y-1 border border-line p-4 font-mono text-sm"
-            >
+            <ul v-if="showRecoveryCodes" class="border-line space-y-1 border p-4 font-mono text-sm">
                 <li v-for="code in twoFactor.recoveryCodesList.value" :key="code">
                     {{ code }}
                 </li>
@@ -160,7 +152,7 @@ onUnmounted(() => twoFactor.clearTwoFactorAuthData());
         </template>
         <template v-else>
             <button type="button" :disabled="processing" @click="startSetup">Enable 2FA</button>
-            <div v-if="showSetup" class="space-y-4 border border-line p-4">
+            <div v-if="showSetup" class="border-line space-y-4 border p-4">
                 <div v-if="twoFactor.errors.value.length">
                     <FormFieldError
                         v-for="error in twoFactor.errors.value"
