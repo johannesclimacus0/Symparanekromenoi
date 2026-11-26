@@ -5,9 +5,11 @@ namespace App\Modules\Deployments\Jobs;
 use App\Enums\DeploymentStatus;
 use App\Models\Deployment;
 use App\Models\DeploymentLogEntry;
-use Illuminate\Support\Facades\DB;
+use App\Modules\Deployments\Exceptions\DeploymentValidationException;
+use App\Modules\Deployments\Pipelines\DeploymentDryRunPipeline;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 
 class RunDeploymentDryRun implements ShouldQueue
@@ -16,7 +18,7 @@ class RunDeploymentDryRun implements ShouldQueue
 
     public function __construct(private int $deploymentId) {}
 
-    public function handle(): void
+    public function handle(DeploymentDryRunPipeline $pipeline): void
     {
         $deployment = DB::transaction(function (): ?Deployment {
             $deployment = Deployment::query()
@@ -98,13 +100,13 @@ class RunDeploymentDryRun implements ShouldQueue
             return;
         }
 
-        DB::transaction(function (): void {
+        $running = DB::transaction(function (): ?Deployment {
             $deployment = Deployment::query()
                 ->lockForUpdate()
                 ->findOrFail($this->deploymentId);
 
             if ($deployment->status !== DeploymentStatus::Preparing) {
-                return;
+                return null;
             }
 
             $deployment->update([
@@ -115,19 +117,68 @@ class RunDeploymentDryRun implements ShouldQueue
                 'deployment_id' => $deployment->id,
                 'sequence' => $this->nextSequence($deployment),
                 'stream' => 'system',
-                'message' => 'Deployment target and permissions verified.',
+                'message' => 'Starting configuration validation.',
+                'recorded_at' => now(),
+            ]);
+
+            return $deployment;
+        });
+
+        if ($running === null) {
+            return;
+        }
+
+        try {
+            $pipeline->handle($running);
+        } catch (DeploymentValidationException $exception) {
+            $this->failDeployment(
+                $exception->failureCode,
+                $exception->getMessage(),
+            );
+
+            return;
+        }
+
+        $this->completeDeployment();
+    }
+
+    private function completeDeployment(): void
+    {
+        DB::transaction(function (): void {
+            $deployment = Deployment::query()
+                ->lockForUpdate()
+                ->findOrFail($this->deploymentId);
+
+            if ($deployment->status !== DeploymentStatus::Running) {
+                return;
+            }
+
+            $deployment->update([
+                'status' => DeploymentStatus::Succeeded,
+                'finished_at' => now(),
+            ]);
+
+            DeploymentLogEntry::create([
+                'deployment_id' => $deployment->id,
+                'sequence' => $this->nextSequence($deployment),
+                'stream' => 'system',
+                'message' => 'Configuration validation succeeded.',
                 'recorded_at' => now(),
             ]);
         });
     }
 
-    private function failDeployment(string $code, string $message): void {
+    private function failDeployment(string $code, string $message): void
+    {
         DB::transaction(function () use ($code, $message): void {
             $deployment = Deployment::query()
                 ->lockForUpdate()
                 ->findOrFail($this->deploymentId);
 
-            if ($deployment->status !== DeploymentStatus::Preparing) {
+            if (! in_array($deployment->status, [
+                DeploymentStatus::Preparing,
+                DeploymentStatus::Running,
+            ], true)) {
                 return;
             }
 
@@ -151,7 +202,7 @@ class RunDeploymentDryRun implements ShouldQueue
     private function nextSequence(Deployment $deployment): int
     {
         return (int) DeploymentLogEntry::query()
-                ->where('deployment_id', $deployment->id)
-                ->max('sequence') + 1;
+            ->where('deployment_id', $deployment->id)
+            ->max('sequence') + 1;
     }
 }

@@ -17,11 +17,11 @@ use Illuminate\Validation\ValidationException;
 
 final class RequestDeploymentDryRun
 {
-    public function handle(User $user, string $environmentUuid, string $idempotencyKey): Deployment {
+    public function handle(User $user, string $environmentUuid, string $idempotencyKey): Deployment
+    {
         $environment = Environment::query()
             ->where('uuid', $environmentUuid)
-            ->whereHas('project.workspace.memberships', fn ($query) =>
-                $query->where('user_id', $user->id),
+            ->whereHas('project.workspace.memberships', fn ($query) => $query->where('user_id', $user->id),
             )
             ->firstOrFail();
 
@@ -67,6 +67,7 @@ final class RequestDeploymentDryRun
             'server' => [
                 'uuid' => $server->uuid,
                 'name' => $server->name,
+                'address' => $server->address,
             ],
         ];
 
@@ -117,7 +118,8 @@ final class RequestDeploymentDryRun
         });
     }
 
-    private function ensureSameEnvironment(Deployment $deployment, Environment $environment): void {
+    private function ensureSameEnvironment(Deployment $deployment, Environment $environment): void
+    {
         if ($deployment->environment_id !== $environment->id) {
             throw ValidationException::withMessages([
                 'idempotencyKey' => 'This key has already been used for another environment',

@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property DeploymentStatus $status
+ * @property array<string, mixed> $snapshot
  * @property-read Environment|null $environment
  * @property-read Collection<int, DeploymentLogEntry> $logEntries
  * @property-read int|null $log_entries_count

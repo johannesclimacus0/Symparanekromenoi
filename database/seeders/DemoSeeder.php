@@ -32,12 +32,12 @@ class DemoSeeder extends Seeder
 
         $developer = User::factory()->create([
             'name' => 'developer',
-            'email' => 'dev@example.com'
+            'email' => 'dev@example.com',
         ]);
 
         $viewer = User::factory()->create([
             'name' => 'viewer',
-            'email' => 'viewer@example.com'
+            'email' => 'viewer@example.com',
         ]);
 
         Workspace::factory()
