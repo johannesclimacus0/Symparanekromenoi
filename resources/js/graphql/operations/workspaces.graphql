@@ -29,7 +29,9 @@ mutation UpdateWorkspace($input: UpdateWorkspaceInput!) {
 }
 
 mutation InviteWorkspaceMember($input: InviteWorkspaceMemberInput!) {
-    inviteWorkspaceMember(input: $input) { id }
+    inviteWorkspaceMember(input: $input) {
+        id
+    }
 }
 
 mutation RevokeWorkspaceInvitation($input: RevokeWorkspaceInvitationInput!) {

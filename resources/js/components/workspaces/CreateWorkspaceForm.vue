@@ -62,11 +62,7 @@ async function createWorkspace(): Promise<void> {
 
             <FormFieldError v-if="errorMessage" :message="errorMessage" />
 
-            <button
-                type="submit"
-                class="font-semibold"
-                :disabled="isSaving"
-            >
+            <button type="submit" class="font-semibold" :disabled="isSaving">
                 {{ isSaving ? 'Creating...' : 'Create workspace' }}
             </button>
             <button type="button" :disabled="isSaving" @click="emit('cancel')">Cancel</button>

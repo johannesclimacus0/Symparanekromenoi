@@ -27,7 +27,7 @@ import AuthSubmitButton from '@/components/auth/AuthSubmitButton.vue';
                 <p
                     v-if="props.form.errors.password"
                     :id="fieldErrorId('password')"
-                    class="text-sm text-danger"
+                    class="text-danger text-sm"
                     role="alert"
                 >
                     {{ props.form.errors.password }}

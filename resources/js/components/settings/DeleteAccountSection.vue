@@ -34,10 +34,10 @@ async function deleteAccount(): Promise<void> {
 </script>
 
 <template>
-    <section class="space-y-4 border-t border-line pt-6">
+    <section class="border-line space-y-4 border-t pt-6">
         <header>
             <h2 class="text-lg font-semibold">Delete account</h2>
-            <p class="text-sm text-muted">Delete your account and its data permanently.</p>
+            <p class="text-muted text-sm">Delete your account and its data permanently.</p>
         </header>
         <button type="button" @click="openDialog">Delete account</button>
         <div
@@ -49,7 +49,7 @@ async function deleteAccount(): Promise<void> {
                 role="dialog"
                 aria-modal="true"
                 aria-labelledby="delete-title"
-                class="w-full max-w-md space-y-4 border border-line bg-panel p-6"
+                class="border-line bg-panel w-full max-w-md space-y-4 border p-6"
                 @keydown.esc="closeDialog"
             >
                 <h2 id="delete-title" class="text-lg font-semibold">Delete account?</h2>

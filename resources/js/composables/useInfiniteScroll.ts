@@ -29,7 +29,7 @@ export function useInfiniteScroll(
         observer = new IntersectionObserver(
             (entries, source) => {
                 if (source === observer && enabled.value && entries[0]?.isIntersecting) {
-                    callback();
+                    void callback();
                 }
             },
             {
