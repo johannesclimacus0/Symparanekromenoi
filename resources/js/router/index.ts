@@ -25,6 +25,7 @@ const routes = [
             },
             { path: '', component: VerifiedRoute,
                 children: [
+                    { path: 'invitations/accept', name: 'invitations.accept', component: () => import('@/modules/workspaces/AcceptInvitationPage.vue') },
                     { path: 'dashboard', name: 'dashboard', component: () => import('@/pages/DashboardPage.vue') },
                     { path: 'settings', redirect: '/settings/profile' },
                     { path: 'settings/profile', name: 'settings.profile', component: () => import('@/pages/settings/ProfileSettingsPage.vue') },

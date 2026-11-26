@@ -1,12 +1,30 @@
 extend type Query {
-    environment(id: ID!): Environment @guard @field(resolver: "App\\GraphQL\\Queries\\Environment\\Environment")
-    environments(projectId: ID!): [Environment!]! @guard @paginate(type: CONNECTION, builder: "App\\GraphQL\\Queries\\Environment\\Environments", defaultCount: 20, maxCount: 100)
+    environment(id: ID!): Environment
+        @guard
+        @field(resolver: "App\\GraphQL\\Queries\\Environment\\Environment")
+    environments(projectId: ID!): [Environment!]!
+        @guard
+        @paginate(
+            type: CONNECTION
+            builder: "App\\GraphQL\\Queries\\Environment\\Environments"
+            defaultCount: 20
+            maxCount: 100
+        )
 }
 
 extend type Mutation {
-    createEnvironment(input: CreateEnvironmentInput!): Environment! @guard @verified @field(resolver: "App\\GraphQL\\Mutations\\Environment\\CreateEnvironment")
-    updateEnvironment(input: UpdateEnvironmentInput!): Environment! @guard @verified @field(resolver: "App\\GraphQL\\Mutations\\Environment\\UpdateEnvironment")
-    deleteEnvironment(id: ID!): Boolean! @guard @verified @field(resolver: "App\\GraphQL\\Mutations\\Environment\\DeleteEnvironment")
+    createEnvironment(input: CreateEnvironmentInput!): Environment!
+        @guard
+        @verified
+        @field(resolver: "App\\GraphQL\\Mutations\\Environment\\CreateEnvironment")
+    updateEnvironment(input: UpdateEnvironmentInput!): Environment!
+        @guard
+        @verified
+        @field(resolver: "App\\GraphQL\\Mutations\\Environment\\UpdateEnvironment")
+    deleteEnvironment(id: ID!): Boolean!
+        @guard
+        @verified
+        @field(resolver: "App\\GraphQL\\Mutations\\Environment\\DeleteEnvironment")
 }
 
 type Environment {

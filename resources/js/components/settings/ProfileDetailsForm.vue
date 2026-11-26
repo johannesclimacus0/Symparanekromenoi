@@ -41,7 +41,7 @@ async function onResendVerification(): Promise<void> {
     <section class="space-y-6">
         <header>
             <h2 class="text-lg font-semibold">Profile</h2>
-            <p class="text-sm text-neutral-600">Update your name and email address</p>
+            <p class="text-sm text-muted">Update your name and email address</p>
         </header>
 
         <form class="space-y-6" novalidate @submit.prevent="onSubmit">
@@ -89,11 +89,11 @@ async function onResendVerification(): Promise<void> {
             </div>
 
             <div v-if="props.user && props.user.email_verified_at === null">
-                <p class="-mt-4 text-sm text-neutral-600">
+                <p class="-mt-4 text-sm text-muted">
                     Your email address is unverified.
                     <button
                         type="button"
-                        class="cursor-pointer text-neutral-900 underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current!"
+                        class="cursor-pointer text-ink underline decoration-neutral-300 underline-offset-4 transition-colors duration-300 ease-out hover:decoration-current!"
                         @click="onResendVerification"
                     >
                         Click here to re-send the verification email.
@@ -101,7 +101,7 @@ async function onResendVerification(): Promise<void> {
                 </p>
                 <p
                     v-if="verificationStatus === 'verification-link-sent'"
-                    class="mt-2 text-sm font-medium text-green-600"
+                    class="mt-2 text-sm font-medium text-success"
                     role="status"
                     aria-live="polite"
                 >

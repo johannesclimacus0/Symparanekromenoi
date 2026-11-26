@@ -19,30 +19,42 @@ async function handleLogout(): Promise<void> {
 <template>
     <main
         v-if="auth.isLoading"
-        class="flex min-h-screen items-center justify-center bg-white"
+        class="bg-panel flex min-h-screen items-center justify-center"
         role="status"
         aria-live="polite"
         aria-busy="true"
     >
-        <span class="text-sm text-neutral-600">Loading…</span>
+        <span class="text-muted text-sm">Loading…</span>
     </main>
-    <template v-else>
+    <div
+        v-else
+        :class="{
+            'grid h-dvh grid-rows-[auto_minmax(0,1fr)]': route.path.startsWith('/dashboard'),
+        }"
+    >
         <AuthSessionBridge />
         <header
             v-if="route.path.startsWith('/dashboard') || route.path.startsWith('/settings')"
-            class="border-b border-neutral-200 bg-white"
+            class="border-line bg-panel border-b"
         >
-            <div class="mx-auto flex max-w-5xl flex-wrap items-center gap-4 px-4 py-3">
-                <nav aria-label="Main" class="flex gap-4 text-sm">
-                    <a href="/dashboard">Dashboard</a>
-                    <a href="/settings/profile">Settings</a>
+            <div class="flex flex-wrap items-center gap-4 px-4 py-3">
+                <nav aria-label="Main" class="terminal-actions flex flex-wrap gap-3 text-sm">
+                    <RouterLink to="/dashboard" active-class="text-accent">Dashboard</RouterLink>
+                    <RouterLink
+                        to="/settings/profile"
+                        :class="{ 'text-accent': route.path.startsWith('/settings') }"
+                        >Settings</RouterLink
+                    >
                 </nav>
-                <div v-if="auth.user" class="ml-auto flex items-center gap-3 text-sm">
+                <div
+                    v-if="auth.user"
+                    class="terminal-actions ml-auto flex items-center gap-3 text-sm"
+                >
                     <span>{{ auth.user.name }}</span>
                     <button type="button" @click="handleLogout">Log out</button>
                 </div>
             </div>
         </header>
         <RouterView />
-    </template>
+    </div>
 </template>
