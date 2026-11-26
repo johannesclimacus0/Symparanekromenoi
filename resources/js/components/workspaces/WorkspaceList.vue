@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, onMounted, ref } from 'vue';
+import { computed, nextTick, onMounted, ref, watch } from 'vue';
 import FormFieldError from '@/components/shared/FormFieldError.vue';
 import { normalizeApiError } from '@/http/http';
 import { workspaceService } from '@/services/workspaces/WorkspaceService';
@@ -14,6 +14,7 @@ import {
 import { useWorkspaceRequest } from '@/modules/workspaces/useWorkspaceRequest';
 import WorkspaceResources from './WorkspaceResources.vue';
 import CreateWorkspaceForm from './CreateWorkspaceForm.vue';
+import { useInfiniteScroll } from '@/composables/useInfiniteScroll';
 
 type Workspace = { id: string; name: string };
 
@@ -33,6 +34,12 @@ function selectWorkspace(id: string) {
 const restoring = ref(false);
 const restoreId = ref('');
 const { run, processing, failure } = useWorkspaceRequest();
+
+const AUTO_LOAD_STORAGE_KEY = 'workspaces:auto-load';
+const autoLoad = ref<boolean>(localStorage.getItem(AUTO_LOAD_STORAGE_KEY) !== 'false');
+
+const scrollContainerRef = ref<HTMLElement | null>(null);
+const sentinelRef = ref<HTMLElement | null>(null);
 
 function restore() {
     return run(async (signal) => {
@@ -104,6 +111,21 @@ let requestId = 0;
 const endCursor = ref<string | null>(null);
 const isLoadingMore = ref(false);
 
+const canAutoLoad = computed(
+    () =>
+        autoLoad.value &&
+        !isLoading.value &&
+        hasNextPage.value &&
+        !isLoadingMore.value &&
+        !moreError.value,
+);
+
+useInfiniteScroll(sentinelRef, loadMoreWorkspaces, {
+    enabled: canAutoLoad,
+    root: scrollContainerRef,
+    rootMargin: '80px',
+});
+
 function updateWorkspace(updatedWorkspace: Workspace): void {
     workspaces.value = workspaces.value.map((workspace) => {
         if (workspace.id === updatedWorkspace.id) {
@@ -118,6 +140,8 @@ async function loadWorkspaces(): Promise<void> {
     const currentRequest = ++requestId;
     isLoading.value = true;
     errorMessage.value = null;
+    moreError.value = null;
+    isLoadingMore.value = false;
 
     try {
         const result = await workspaceService.getWorkspaces(20);
@@ -126,7 +150,7 @@ async function loadWorkspaces(): Promise<void> {
         workspaces.value = result.edges.map((edge) => edge.node);
         creating.value = workspaces.value.length === 0;
         selectedId.value = workspaces.value[0]?.id ?? '';
-        hasNextPage.value = result.pageInfo.hasNextPage;
+        hasNextPage.value = result.pageInfo.hasNextPage && result.pageInfo.endCursor !== null;
 
         endCursor.value = result.pageInfo.endCursor;
     } catch (error) {
@@ -138,7 +162,8 @@ async function loadWorkspaces(): Promise<void> {
 }
 
 async function loadMoreWorkspaces(): Promise<void> {
-    if (isLoading.value || isLoadingMore.value || endCursor.value === null) return;
+    if (!hasNextPage.value || isLoading.value || isLoadingMore.value || endCursor.value === null)
+        return;
 
     const currentRequest = ++requestId;
     isLoadingMore.value = true;
@@ -153,16 +178,23 @@ async function loadMoreWorkspaces(): Promise<void> {
         workspaces.value.push(
             ...result.edges.map((edge) => edge.node).filter((node) => !existing.has(node.id)),
         );
-        hasNextPage.value = result.pageInfo.hasNextPage;
+        hasNextPage.value =
+            result.pageInfo.hasNextPage &&
+            result.pageInfo.endCursor !== null &&
+            result.pageInfo.endCursor !== endCursor.value;
         endCursor.value = result.pageInfo.endCursor;
     } catch (error) {
         if (currentRequest !== requestId) return;
 
         moreError.value = normalizeApiError(error).message;
     } finally {
-        isLoadingMore.value = false;
+        if (currentRequest === requestId) isLoadingMore.value = false;
     }
 }
+
+watch(autoLoad, (value) => {
+    localStorage.setItem(AUTO_LOAD_STORAGE_KEY, String(value));
+});
 
 onMounted(loadWorkspaces);
 </script>
@@ -191,6 +223,7 @@ onMounted(loadWorkspaces);
                 </button>
             </header>
             <div
+                ref="scrollContainerRef"
                 class="min-h-0 flex-1 scrollbar-none overflow-y-auto overscroll-contain [&::-webkit-scrollbar]:hidden"
             >
                 <p v-if="isLoading" class="text-muted py-4" role="status">loading...</p>
@@ -232,6 +265,7 @@ onMounted(loadWorkspaces);
                         </ul>
                     </nav>
                     <div v-if="hasNextPage" class="terminal-actions">
+                        <div ref="sentinelRef" class="h-px"></div>
                         <FormFieldError v-if="moreError" :message="moreError" />
                         <button :disabled="isLoadingMore" @click="loadMoreWorkspaces">
                             {{ isLoadingMore ? 'loading...' : 'load more' }}
@@ -242,6 +276,9 @@ onMounted(loadWorkspaces);
             <div
                 class="terminal-actions border-line mt-2 shrink-0 border-t border-dashed pt-1 text-center text-sm"
             >
+                <label class="text-muted flex items-center justify-center gap-2 text-xs">
+                    <input v-model="autoLoad" type="checkbox" /> auto-load workspaces
+                </label>
                 <button
                     :disabled="processing"
                     @click="
