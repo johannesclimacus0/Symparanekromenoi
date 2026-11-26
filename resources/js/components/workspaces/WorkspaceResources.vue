@@ -10,6 +10,7 @@ import {
 } from '@/graphql/generated/graphql';
 import { normalizeApiError } from '@/http/http';
 import * as api from '@/graphql/generated/graphql';
+import DeployResult from '@/modules/deployments/DeployResult.vue';
 import ResourceEditor from '@/modules/workspaces/ResourceEditor.vue';
 import AccessEditor from '@/modules/workspaces/AccessEditor.vue';
 import { useWorkspaceRequest } from '@/modules/workspaces/useWorkspaceRequest';
@@ -241,12 +242,14 @@ onUnmounted(() => controller.abort());
                             {{ section === 'invitations' ? 'revoke' : 'remove' }}
                         </button>
                     </div>
-                    <p
-                        v-if="section === 'environments' && receipts[row.id]"
-                        class="text-muted break-words sm:col-span-2"
-                    >
-                        dry run {{ receipts[row.id]?.id }} / {{ receipts[row.id]?.status }}
-                    </p>
+                    <template v-if="section === 'environments'">
+                        <DeployResult
+                            v-if="receipts[row.id]"
+                            :key="receipts[row.id].id"
+                            :deployment-id="receipts[row.id].id"
+                            :initial-status="receipts[row.id].status"
+                        />
+                    </template>
                 </li>
             </ul>
             <FormFieldError v-if="error" :message="error" />

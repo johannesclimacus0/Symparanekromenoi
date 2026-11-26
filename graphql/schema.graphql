@@ -26,4 +26,3 @@ input UpdateMyProfileInput {
     name: String! @trim
     email: String! @trim
 }
-

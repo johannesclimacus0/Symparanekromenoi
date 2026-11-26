@@ -223,7 +223,7 @@ return [
 
     'namespaces' => [
         'models' => ['App', 'App\\Models'],
-        'queries' => ['App\\GraphQL\\Queries', 'App\\GraphQL\\Queries\\Account', 'App\\GraphQL\\Queries\\Workspace'],
+        'queries' => ['App\\GraphQL\\Queries', 'App\\GraphQL\\Queries\\Account', 'App\\GraphQL\\Queries\\Workspace', 'App\\GraphQL\\Queries\\Deployment'],
         'mutations' => ['App\\GraphQL\\Mutations', 'App\\GraphQL\\Mutations\\Account', 'App\\GraphQL\\Mutations\\Workspace', 'App\\GraphQL\\Mutations\\Deployments'],
         'subscriptions' => 'App\\GraphQL\\Subscriptions',
         'types' => 'App\\GraphQL\\Types',

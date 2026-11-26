@@ -4,3 +4,12 @@ mutation RequestDeploymentDryRun($input: RequestDeploymentDryRunInput!) {
         status
     }
 }
+
+query DeployResult($id: ID!) {
+    deployment(id: $id) {
+        id
+        status
+        finishedAt
+        failureMessage
+    }
+}

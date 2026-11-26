@@ -38,7 +38,9 @@ input RequestDeploymentDryRunInput {
 }
 
 extend type Mutation {
-    requestDeploymentDryRun(
-        input: RequestDeploymentDryRunInput!
-    ): Deployment! @guard
+    requestDeploymentDryRun(input: RequestDeploymentDryRunInput!): Deployment! @guard
+}
+
+extend type Query {
+    deployment(id: ID! @rules(apply: ["uuid"])): Deployment @guard
 }
