@@ -30,7 +30,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  *
  * @mixin \Eloquent
  */
-#[Fillable(['workspace_id', 'environment_id', 'server_id', 'requested_by_id', 'status', 'snapshot', 'failure_code', 'failure_message', 'started_at', 'finished_at'])]
+#[Fillable(['workspace_id', 'environment_id', 'server_id', 'requested_by_id', 'status', 'snapshot', 'failure_code', 'failure_message', 'started_at', 'finished_at', 'idempotency_key'])]
 class Deployment extends Model
 {
     /** @use HasFactory<DeploymentFactory> */

@@ -2,11 +2,14 @@
 
 namespace App\Providers;
 
+use App\Enums\DeploymentStatus;
 use Carbon\CarbonImmutable;
+use GraphQL\Type\Definition\PhpEnumType;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
+use Nuwave\Lighthouse\Schema\TypeRegistry;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -24,6 +27,9 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
+        app(TypeRegistry::class)->register(
+            new PhpEnumType(DeploymentStatus::class)
+        );
     }
 
     /**

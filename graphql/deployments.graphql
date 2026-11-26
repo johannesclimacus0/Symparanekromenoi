@@ -1,0 +1,44 @@
+type Deployment {
+    id: ID! @rename(attribute: "uuid")
+    status: DeploymentStatus!
+
+    workspace: Workspace @belongsTo
+    environment: Environment @belongsTo
+    server: Server @belongsTo
+    requestedBy: User @belongsTo
+
+    snapshot: DeploymentSnapshot
+
+    failureCode: String @rename(attribute: "failure_code")
+    failureMessage: String @rename(attribute: "failure_message")
+
+    startedAt: DateTime @rename(attribute: "started_at")
+    finishedAt: DateTime @rename(attribute: "finished_at")
+    createdAt: DateTime! @rename(attribute: "created_at")
+    updatedAt: DateTime! @rename(attribute: "updated_at")
+}
+
+type DeploymentSnapshot {
+    version: Int!
+    mode: String!
+
+    project: DeploymentTargetSnapshot!
+    environment: DeploymentTargetSnapshot!
+    server: DeploymentTargetSnapshot!
+}
+
+type DeploymentTargetSnapshot {
+    id: ID! @rename(attribute: "uuid")
+    name: String!
+}
+
+input RequestDeploymentDryRunInput {
+    environmentId: ID!
+    idempotencyKey: String!
+}
+
+extend type Mutation {
+    requestDeploymentDryRun(
+        input: RequestDeploymentDryRunInput!
+    ): Deployment! @guard
+}
