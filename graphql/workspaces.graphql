@@ -1,7 +1,22 @@
 extend type Query {
     workspace(id: ID!): Workspace @guard
-    workspaceInvitations(id: ID!): [WorkspaceInvitation!]! @guard @verified @paginate(type: CONNECTION, builder: "App\\GraphQL\\Queries\\Workspace\\WorkspaceInvitations", defaultCount: 20, maxCount: 100)
-    workspaceMembers(id: ID!): [WorkspaceMembership!]! @guard @paginate(type: CONNECTION, builder: "App\\GraphQL\\Queries\\Workspace\\WorkspaceMembers", defaultCount: 20, maxCount: 100)
+    workspaceInvitations(id: ID!): [WorkspaceInvitation!]!
+        @guard
+        @verified
+        @paginate(
+            type: CONNECTION
+            builder: "App\\GraphQL\\Queries\\Workspace\\WorkspaceInvitations"
+            defaultCount: 20
+            maxCount: 100
+        )
+    workspaceMembers(id: ID!): [WorkspaceMembership!]!
+        @guard
+        @paginate(
+            type: CONNECTION
+            builder: "App\\GraphQL\\Queries\\Workspace\\WorkspaceMembers"
+            defaultCount: 20
+            maxCount: 100
+        )
     myWorkspaces(first: Int = 20, after: String): WorkspaceConnection! @guard
 }
 
