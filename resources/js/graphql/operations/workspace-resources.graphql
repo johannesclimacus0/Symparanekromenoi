@@ -1,0 +1,70 @@
+query BrowseProjects($id: ID!, $after: String) {
+    items: projects(workspaceId: $id, first: 20, after: $after) {
+        edges { node { __typename id name description } }
+        pageInfo { endCursor hasNextPage }
+    }
+}
+
+query BrowseServers($id: ID!, $after: String) {
+    items: servers(workspaceId: $id, first: 20, after: $after) {
+        edges { node { __typename id name address description } }
+        pageInfo { endCursor hasNextPage }
+    }
+}
+
+query BrowseMembers($id: ID!, $after: String) {
+    items: workspaceMembers(id: $id, first: 20, after: $after) {
+        edges { node { __typename id role user { name } } }
+        pageInfo { endCursor hasNextPage }
+    }
+}
+
+query BrowseEnvironments($id: ID!, $after: String) {
+    items: environments(projectId: $id, first: 20, after: $after) {
+        edges { node { __typename id name description server { id name } } }
+        pageInfo { endCursor hasNextPage }
+    }
+}
+
+query BrowseInvitations($id: ID!, $after: String) {
+    items: workspaceInvitations(id: $id, first: 20, after: $after) {
+        edges { node { __typename id email expiresAt } }
+        pageInfo { endCursor hasNextPage }
+    }
+}
+
+mutation CreateProject($input: CreateProjectInput!) {
+    createProject(input: $input) { id name }
+}
+
+mutation UpdateProject($input: UpdateProjectInput!) {
+    updateProject(input: $input) { id name }
+}
+
+mutation DeleteProject($id: ID!) {
+    deleteProject(id: $id)
+}
+
+mutation CreateServer($input: CreateServerInput!) {
+    createServer(input: $input) { id name }
+}
+
+mutation UpdateServer($input: UpdateServerInput!) {
+    updateServer(input: $input) { id name }
+}
+
+mutation DeleteServer($id: ID!) {
+    deleteServer(id: $id)
+}
+
+mutation CreateEnvironment($input: CreateEnvironmentInput!) {
+    createEnvironment(input: $input) { id name }
+}
+
+mutation UpdateEnvironment($input: UpdateEnvironmentInput!) {
+    updateEnvironment(input: $input) { id name }
+}
+
+mutation DeleteEnvironment($id: ID!) {
+    deleteEnvironment(id: $id)
+}
