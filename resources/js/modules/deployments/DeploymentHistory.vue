@@ -66,29 +66,34 @@ onUnmounted(() => controller.abort());
             <li
                 v-for="deployment in deployments"
                 :key="deployment.id"
-                class="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 py-2 sm:grid-cols-[auto_10ch_minmax(0,1fr)_auto]"
+                class="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 py-2 sm:grid-cols-[12rem_8rem_minmax(0,1fr)_auto]"
             >
                 <time class="text-muted col-span-2 sm:col-span-1">{{ deployment.createdAt }}</time>
                 <div class="col-start-1 sm:col-start-2">
                     {{ deployment.status }}
+                </div>
+                <span class="col-start-1 min-w-0 break-words sm:col-start-3">{{
+                    deployment.snapshot?.server.name ?? 'unknown target'
+                }}</span>
+                <div
+                    class="col-start-2 row-span-2 row-start-2 flex flex-wrap items-center justify-end gap-x-2 sm:col-start-4 sm:row-span-1 sm:row-start-1"
+                >
                     <CancelDeploymentButton
                         v-if="deployment.status === 'Queued'"
                         :deployment-id="deployment.id"
                         @cancelled="(result) => (deployment.status = result.status)"
                     />
+                    <button
+                        class="whitespace-nowrap"
+                        type="button"
+                        @click="
+                            openDeploymentId =
+                                openDeploymentId === deployment.id ? null : deployment.id
+                        "
+                    >
+                        {{ openDeploymentId === deployment.id ? 'hide logs' : 'logs' }}
+                    </button>
                 </div>
-                <span class="col-start-1 min-w-0 break-words sm:col-start-3">{{
-                    deployment.snapshot?.server.name ?? 'unknown target'
-                }}</span>
-                <button
-                    class="col-start-2 row-span-2 row-start-2 justify-self-end whitespace-nowrap sm:col-start-4 sm:row-span-1 sm:row-start-1"
-                    type="button"
-                    @click="
-                        openDeploymentId = openDeploymentId === deployment.id ? null : deployment.id
-                    "
-                >
-                    {{ openDeploymentId === deployment.id ? 'hide logs' : 'logs' }}
-                </button>
                 <DeploymentJournal
                     v-if="openDeploymentId === deployment.id"
                     :deployment-id="deployment.id"
