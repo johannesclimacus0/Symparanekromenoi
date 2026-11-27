@@ -1,0 +1,66 @@
+type Deployment {
+    id: ID! @rename(attribute: "uuid")
+    status: DeploymentStatus!
+
+    workspace: Workspace @belongsTo
+    environment: Environment @belongsTo
+    server: Server @belongsTo
+    requestedBy: User @belongsTo
+
+    snapshot: DeploymentSnapshot
+
+    failureCode: String @rename(attribute: "failure_code")
+    failureMessage: String @rename(attribute: "failure_message")
+
+    logs: [DeploymentLogEntry!]!
+        @hasMany(relation: "logEntries", type: CONNECTION, defaultCount: 20, maxCount: 100)
+
+    startedAt: DateTime @rename(attribute: "started_at")
+    finishedAt: DateTime @rename(attribute: "finished_at")
+    createdAt: DateTime! @rename(attribute: "created_at")
+    updatedAt: DateTime! @rename(attribute: "updated_at")
+}
+
+type DeploymentSnapshot {
+    version: Int!
+    mode: String!
+
+    project: DeploymentTargetSnapshot!
+    environment: DeploymentTargetSnapshot!
+    server: DeploymentTargetSnapshot!
+}
+
+type DeploymentTargetSnapshot {
+    id: ID! @rename(attribute: "uuid")
+    name: String!
+}
+
+type DeploymentLogEntry {
+    id: ID! @rename(attribute: "uuid")
+    sequence: Int!
+    stream: DeploymentLogStream!
+    message: String!
+    recordedAt: DateTime! @rename(attribute: "recorded_at")
+}
+
+input RequestDeploymentDryRunInput {
+    environmentId: ID! @rules(apply: ["required", "uuid"])
+    idempotencyKey: String! @trim @rules(apply: ["required", "string", "max:255"])
+}
+
+extend type Mutation {
+    cancelDeployment(id: ID! @rules(apply: ["uuid"])): Deployment! @guard @verified
+    requestDeploymentDryRun(input: RequestDeploymentDryRunInput!): Deployment! @guard
+}
+
+extend type Query {
+    deployment(id: ID! @rules(apply: ["uuid"])): Deployment @guard
+    deployments(environmentId: ID! @rules(apply: ["uuid"])): [Deployment!]!
+        @guard
+        @paginate(
+            type: CONNECTION
+            builder: "App\\GraphQL\\Queries\\Deployment\\Deployments"
+            defaultCount: 20
+            maxCount: 100
+        )
+}

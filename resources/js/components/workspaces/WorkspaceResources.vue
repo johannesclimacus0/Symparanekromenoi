@@ -10,6 +10,8 @@ import {
 } from '@/graphql/generated/graphql';
 import { normalizeApiError } from '@/http/http';
 import * as api from '@/graphql/generated/graphql';
+import DeployResult from '@/modules/deployments/DeployResult.vue';
+import DeploymentHistory from '@/modules/deployments/DeploymentHistory.vue';
 import ResourceEditor from '@/modules/workspaces/ResourceEditor.vue';
 import AccessEditor from '@/modules/workspaces/AccessEditor.vue';
 import { useWorkspaceRequest } from '@/modules/workspaces/useWorkspaceRequest';
@@ -36,7 +38,31 @@ const error = ref('');
 const controller = new AbortController();
 
 const editing = ref<Row | 'new' | null>(null);
+const historyEnvironmentId = ref<string | null>(null);
 const { processing, failure, run } = useWorkspaceRequest();
+
+const pendingKeys = new Map<string, string>();
+const receipts = ref<
+    Record<string, api.RequestDeploymentDryRunMutation['requestDeploymentDryRun']>
+>({});
+
+async function requestDryRun(row: Row): Promise<void> {
+    await run(async (signal) => {
+        const environmentId = row.id;
+        const key = pendingKeys.get(environmentId) ?? crypto.randomUUID();
+
+        pendingKeys.set(environmentId, key);
+
+        const data = await graphql(
+            api.RequestDeploymentDryRunDocument,
+            { input: { environmentId, idempotencyKey: key } },
+            { csrf: true, signal },
+        );
+
+        receipts.value[environmentId] = data.requestDeploymentDryRun;
+        pendingKeys.delete(environmentId);
+    });
+}
 
 async function refresh() {
     editing.value = null;
@@ -193,6 +219,24 @@ onUnmounted(() => controller.abort());
                         class="flex flex-wrap gap-2 sm:col-span-2"
                     >
                         <button
+                            v-if="section === 'environments'"
+                            type="button"
+                            :disabled="busy || processing || !row.serverId"
+                            @click="requestDryRun(row)"
+                        >
+                            dry run
+                        </button>
+                        <button
+                            v-if="section === 'environments'"
+                            type="button"
+                            @click="
+                                historyEnvironmentId =
+                                    historyEnvironmentId === row.id ? null : row.id
+                            "
+                        >
+                            {{ historyEnvironmentId === row.id ? 'hide history' : 'history' }}
+                        </button>
+                        <button
                             v-if="section !== 'invitations'"
                             :disabled="busy || processing"
                             @click="editing = row"
@@ -210,6 +254,19 @@ onUnmounted(() => controller.abort());
                             {{ section === 'invitations' ? 'revoke' : 'remove' }}
                         </button>
                     </div>
+                    <template v-if="section === 'environments'">
+                        <DeployResult
+                            v-if="receipts[row.id]"
+                            :key="receipts[row.id].id"
+                            :deployment-id="receipts[row.id].id"
+                            :initial-status="receipts[row.id].status"
+                        />
+                        <DeploymentHistory
+                            v-if="historyEnvironmentId === row.id"
+                            :key="receipts[row.id]?.id ?? row.id"
+                            :environment-id="row.id"
+                        />
+                    </template>
                 </li>
             </ul>
             <FormFieldError v-if="error" :message="error" />

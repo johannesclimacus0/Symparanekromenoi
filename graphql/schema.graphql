@@ -5,6 +5,7 @@
 #import scalars.graphql
 #import preferences.graphql
 #import security.graphql
+#import deployments.graphql
 
 type Query {
     me: User @auth

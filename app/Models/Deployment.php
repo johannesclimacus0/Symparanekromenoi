@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property DeploymentStatus $status
+ * @property array<string, mixed> $snapshot
  * @property-read Environment|null $environment
  * @property-read Collection<int, DeploymentLogEntry> $logEntries
  * @property-read int|null $log_entries_count
@@ -30,7 +31,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  *
  * @mixin \Eloquent
  */
-#[Fillable(['workspace_id', 'environment_id', 'server_id', 'requested_by_id', 'status', 'snapshot', 'failure_code', 'failure_message', 'started_at', 'finished_at'])]
+#[Fillable(['workspace_id', 'environment_id', 'server_id', 'requested_by_id', 'status', 'snapshot', 'failure_code', 'failure_message', 'started_at', 'finished_at', 'idempotency_key'])]
 class Deployment extends Model
 {
     /** @use HasFactory<DeploymentFactory> */
@@ -45,6 +46,16 @@ class Deployment extends Model
             'started_at' => 'datetime',
             'finished_at' => 'datetime',
         ];
+    }
+
+    public function appendSystemLog(string $message): void
+    {
+        $this->logEntries()->create([
+            'sequence' => (int) $this->logEntries()->max('sequence') + 1,
+            'stream' => 'system',
+            'message' => $message,
+            'recorded_at' => now(),
+        ]);
     }
 
     /** @return BelongsTo<Workspace, $this> */
@@ -74,6 +85,6 @@ class Deployment extends Model
     /** @return HasMany<DeploymentLogEntry, $this> */
     public function logEntries(): HasMany
     {
-        return $this->hasMany(DeploymentLogEntry::class);
+        return $this->hasMany(DeploymentLogEntry::class)->orderBy('sequence');
     }
 }

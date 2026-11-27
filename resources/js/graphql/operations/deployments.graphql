@@ -1,0 +1,66 @@
+mutation RequestDeploymentDryRun($input: RequestDeploymentDryRunInput!) {
+    requestDeploymentDryRun(input: $input) {
+        id
+        status
+    }
+}
+
+query DeployResult($id: ID!) {
+    deployment(id: $id) {
+        id
+        status
+        finishedAt
+        failureMessage
+    }
+}
+
+query DeploymentHistory($environmentId: ID!, $after: String) {
+    deployments(environmentId: $environmentId, first: 20, after: $after) {
+        edges {
+            node {
+                id
+                status
+                createdAt
+                snapshot {
+                    server {
+                        name
+                    }
+                }
+            }
+        }
+        pageInfo {
+            endCursor
+            hasNextPage
+        }
+    }
+}
+
+query DeploymentJournal($id: ID!, $after: String) {
+    deployment(id: $id) {
+        status
+        failureMessage
+        logs(first: 20, after: $after) {
+            edges {
+                node {
+                    id
+                    sequence
+                    stream
+                    message
+                    recordedAt
+                }
+            }
+            pageInfo {
+                endCursor
+                hasNextPage
+            }
+        }
+    }
+}
+
+mutation CancelDeployment($id: ID!) {
+    cancelDeployment(id: $id) {
+        id
+        status
+        finishedAt
+    }
+}

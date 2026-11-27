@@ -25,17 +25,27 @@ class DemoSeeder extends Seeder
             'email' => 'test@example.com',
         ]);
 
-        $member = User::factory()->create([
-            'name' => 'Member',
-            'email' => 'member@example.com',
+        $admin = User::factory()->create([
+            'name' => 'admin',
+            'email' => 'admin@example.com',
         ]);
 
-        $roles =
+        $developer = User::factory()->create([
+            'name' => 'developer',
+            'email' => 'dev@example.com',
+        ]);
+
+        $viewer = User::factory()->create([
+            'name' => 'viewer',
+            'email' => 'viewer@example.com',
+        ]);
 
         Workspace::factory()
             ->count(30)
             ->has(WorkspaceMembership::factory()->for($owner)->state(['role' => WorkspaceRole::Owner]), 'memberships')
-            ->has(WorkspaceMembership::factory()->for($member), 'memberships')
+            ->has(WorkspaceMembership::factory()->for($admin)->state(['role' => WorkspaceRole::Admin]), 'memberships')
+            ->has(WorkspaceMembership::factory()->for($developer)->state(['role' => WorkspaceRole::Developer]), 'memberships')
+            ->has(WorkspaceMembership::factory()->for($viewer)->state(['role' => WorkspaceRole::Viewer]), 'memberships')
             ->has(WorkspaceMembership::factory()->count(3)->state(fn () => [
                 'role' => Arr::random(array_filter(
                     WorkspaceRole::cases(),
