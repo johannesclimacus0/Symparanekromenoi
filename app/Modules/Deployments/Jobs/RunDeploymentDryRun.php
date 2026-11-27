@@ -4,17 +4,22 @@ namespace App\Modules\Deployments\Jobs;
 
 use App\Enums\DeploymentStatus;
 use App\Models\Deployment;
-use App\Models\DeploymentLogEntry;
+use App\Modules\Deployments\Actions\FailDeployment;
 use App\Modules\Deployments\Exceptions\DeploymentValidationException;
 use App\Modules\Deployments\Pipelines\DeploymentDryRunPipeline;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Throwable;
 
 class RunDeploymentDryRun implements ShouldQueue
 {
     use Queueable;
+
+    public const TIMEOUT_SECONDS = 60;
+
+    public int $timeout = self::TIMEOUT_SECONDS;
 
     public function __construct(private int $deploymentId) {}
 
@@ -34,13 +39,7 @@ class RunDeploymentDryRun implements ShouldQueue
                 'started_at' => now(),
             ]);
 
-            DeploymentLogEntry::create([
-                'deployment_id' => $deployment->id,
-                'sequence' => $this->nextSequence($deployment),
-                'stream' => 'system',
-                'message' => 'Preparing deployment.',
-                'recorded_at' => now(),
-            ]);
+            $deployment->appendSystemLog('Preparing deployment.');
 
             return $deployment;
         });
@@ -49,6 +48,16 @@ class RunDeploymentDryRun implements ShouldQueue
             return;
         }
 
+        try {
+            $this->execute($deployment, $pipeline);
+        } catch (Throwable $exception) {
+            $this->failDeployment('worker_failed', 'The deployment worker failed.');
+            throw $exception;
+        }
+    }
+
+    private function execute(Deployment $deployment, DeploymentDryRunPipeline $pipeline): void
+    {
         $environment = $deployment->environment;
         $user = $deployment->requestedBy;
 
@@ -113,13 +122,7 @@ class RunDeploymentDryRun implements ShouldQueue
                 'status' => DeploymentStatus::Running,
             ]);
 
-            DeploymentLogEntry::create([
-                'deployment_id' => $deployment->id,
-                'sequence' => $this->nextSequence($deployment),
-                'stream' => 'system',
-                'message' => 'Starting configuration validation.',
-                'recorded_at' => now(),
-            ]);
+            $deployment->appendSystemLog('Starting configuration validation.');
 
             return $deployment;
         });
@@ -158,51 +161,12 @@ class RunDeploymentDryRun implements ShouldQueue
                 'finished_at' => now(),
             ]);
 
-            DeploymentLogEntry::create([
-                'deployment_id' => $deployment->id,
-                'sequence' => $this->nextSequence($deployment),
-                'stream' => 'system',
-                'message' => 'Configuration validation succeeded.',
-                'recorded_at' => now(),
-            ]);
+            $deployment->appendSystemLog('Configuration validation succeeded.');
         });
     }
 
     private function failDeployment(string $code, string $message): void
     {
-        DB::transaction(function () use ($code, $message): void {
-            $deployment = Deployment::query()
-                ->lockForUpdate()
-                ->findOrFail($this->deploymentId);
-
-            if (! in_array($deployment->status, [
-                DeploymentStatus::Preparing,
-                DeploymentStatus::Running,
-            ], true)) {
-                return;
-            }
-
-            $deployment->update([
-                'status' => DeploymentStatus::Failed,
-                'failure_code' => $code,
-                'failure_message' => $message,
-                'finished_at' => now(),
-            ]);
-
-            DeploymentLogEntry::create([
-                'deployment_id' => $deployment->id,
-                'sequence' => $this->nextSequence($deployment),
-                'stream' => 'system',
-                'message' => $message,
-                'recorded_at' => now(),
-            ]);
-        });
-    }
-
-    private function nextSequence(Deployment $deployment): int
-    {
-        return (int) DeploymentLogEntry::query()
-            ->where('deployment_id', $deployment->id)
-            ->max('sequence') + 1;
+        (new FailDeployment)->handle($this->deploymentId, $code, $message);
     }
 }

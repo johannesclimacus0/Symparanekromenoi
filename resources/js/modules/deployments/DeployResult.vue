@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue';
+import CancelDeploymentButton from './CancelDeploymentButton.vue';
 import { graphql } from '@/graphql/client';
 import { DeployResultDocument, type DeploymentStatus } from '@/graphql/generated/graphql';
 import { normalizeApiError } from '@/http/http';
@@ -18,6 +19,13 @@ const unavailable = ref(false);
 const controller = new AbortController();
 let timer: number | undefined;
 
+function onCancelled(deployment: { status: DeploymentStatus; finishedAt: string | null }) {
+    window.clearTimeout(timer);
+    status.value = deployment.status;
+    finishedAt.value = deployment.finishedAt;
+    requestError.value = '';
+}
+
 async function refresh(): Promise<void> {
     requestError.value = '';
 
@@ -28,7 +36,7 @@ async function refresh(): Promise<void> {
             { signal: controller.signal },
         );
 
-        if (controller.signal.aborted) return;
+        if (controller.signal.aborted || status.value === 'Cancelled') return;
 
         if (deployment === null) {
             unavailable.value = true;
@@ -63,6 +71,12 @@ onUnmounted(() => {
             dry run {{ deploymentId }} / {{ unavailable ? 'unavailable' : status }}
             <time v-if="finishedAt">{{ finishedAt }}</time>
         </p>
+
+        <CancelDeploymentButton
+            v-if="status === 'Queued' && !unavailable"
+            :deployment-id="deploymentId"
+            @cancelled="onCancelled"
+        />
 
         <p v-if="failureMessage" class="text-danger">{{ failureMessage }}</p>
 

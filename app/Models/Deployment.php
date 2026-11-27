@@ -48,6 +48,16 @@ class Deployment extends Model
         ];
     }
 
+    public function appendSystemLog(string $message): void
+    {
+        $this->logEntries()->create([
+            'sequence' => (int) $this->logEntries()->max('sequence') + 1,
+            'stream' => 'system',
+            'message' => $message,
+            'recorded_at' => now(),
+        ]);
+    }
+
     /** @return BelongsTo<Workspace, $this> */
     public function workspace(): BelongsTo
     {

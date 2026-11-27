@@ -13,12 +13,7 @@ type Deployment {
     failureMessage: String @rename(attribute: "failure_message")
 
     logs: [DeploymentLogEntry!]!
-        @hasMany(
-            relation: "logEntries"
-            type: CONNECTION
-            defaultCount: 20
-            maxCount: 100
-        )
+        @hasMany(relation: "logEntries", type: CONNECTION, defaultCount: 20, maxCount: 100)
 
     startedAt: DateTime @rename(attribute: "started_at")
     finishedAt: DateTime @rename(attribute: "finished_at")
@@ -54,6 +49,7 @@ input RequestDeploymentDryRunInput {
 }
 
 extend type Mutation {
+    cancelDeployment(id: ID! @rules(apply: ["uuid"])): Deployment! @guard @verified
     requestDeploymentDryRun(input: RequestDeploymentDryRunInput!): Deployment! @guard
 }
 

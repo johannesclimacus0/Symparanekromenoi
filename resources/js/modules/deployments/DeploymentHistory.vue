@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'vue';
+import CancelDeploymentButton from './CancelDeploymentButton.vue';
 import { graphql } from '@/graphql/client';
 import {
     DeploymentHistoryDocument,
@@ -68,7 +69,14 @@ onUnmounted(() => controller.abort());
                 class="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 py-2 sm:grid-cols-[auto_10ch_minmax(0,1fr)_auto]"
             >
                 <time class="text-muted col-span-2 sm:col-span-1">{{ deployment.createdAt }}</time>
-                <span class="col-start-1 sm:col-start-2">{{ deployment.status }}</span>
+                <div class="col-start-1 sm:col-start-2">
+                    {{ deployment.status }}
+                    <CancelDeploymentButton
+                        v-if="deployment.status === 'Queued'"
+                        :deployment-id="deployment.id"
+                        @cancelled="(result) => (deployment.status = result.status)"
+                    />
+                </div>
                 <span class="col-start-1 min-w-0 break-words sm:col-start-3">{{
                     deployment.snapshot?.server.name ?? 'unknown target'
                 }}</span>

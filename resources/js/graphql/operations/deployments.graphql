@@ -57,3 +57,10 @@ query DeploymentJournal($id: ID!, $after: String) {
     }
 }
 
+mutation CancelDeployment($id: ID!) {
+    cancelDeployment(id: $id) {
+        id
+        status
+        finishedAt
+    }
+}
