@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\GraphQL\Queries\Deployment;
 
-use App\Models\User;
 use App\Models\Deployment;
+use App\Models\User;
 use App\Modules\Deployments\Queries\ListDeployments;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\Builder;

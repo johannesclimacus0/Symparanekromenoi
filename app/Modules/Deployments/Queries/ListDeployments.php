@@ -14,11 +14,9 @@ class ListDeployments
     public function forEnvironment(User $user, string $environmentUuid): Builder
     {
         return Deployment::query()
-            ->whereHas('workspace.memberships', fn (Builder $query) =>
-                $query->where('user_id', $user->id)
+            ->whereHas('workspace.memberships', fn (Builder $query) => $query->where('user_id', $user->id)
             )
-            ->whereHas('environment', fn (Builder $query) =>
-                $query->where('uuid', $environmentUuid)
+            ->whereHas('environment', fn (Builder $query) => $query->where('uuid', $environmentUuid)
             )
             ->orderByDesc('created_at')
             ->orderByDesc('id');
