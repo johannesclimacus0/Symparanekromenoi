@@ -75,6 +75,6 @@ class Deployment extends Model
     /** @return HasMany<DeploymentLogEntry, $this> */
     public function logEntries(): HasMany
     {
-        return $this->hasMany(DeploymentLogEntry::class);
+        return $this->hasMany(DeploymentLogEntry::class)->orderBy('sequence');
     }
 }

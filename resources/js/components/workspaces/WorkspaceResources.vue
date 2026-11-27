@@ -11,6 +11,7 @@ import {
 import { normalizeApiError } from '@/http/http';
 import * as api from '@/graphql/generated/graphql';
 import DeployResult from '@/modules/deployments/DeployResult.vue';
+import DeploymentHistory from '@/modules/deployments/DeploymentHistory.vue';
 import ResourceEditor from '@/modules/workspaces/ResourceEditor.vue';
 import AccessEditor from '@/modules/workspaces/AccessEditor.vue';
 import { useWorkspaceRequest } from '@/modules/workspaces/useWorkspaceRequest';
@@ -37,6 +38,7 @@ const error = ref('');
 const controller = new AbortController();
 
 const editing = ref<Row | 'new' | null>(null);
+const historyEnvironmentId = ref<string | null>(null);
 const { processing, failure, run } = useWorkspaceRequest();
 
 const pendingKeys = new Map<string, string>();
@@ -225,6 +227,16 @@ onUnmounted(() => controller.abort());
                             dry run
                         </button>
                         <button
+                            v-if="section === 'environments'"
+                            type="button"
+                            @click="
+                                historyEnvironmentId =
+                                    historyEnvironmentId === row.id ? null : row.id
+                            "
+                        >
+                            {{ historyEnvironmentId === row.id ? 'hide history' : 'history' }}
+                        </button>
+                        <button
                             v-if="section !== 'invitations'"
                             :disabled="busy || processing"
                             @click="editing = row"
@@ -248,6 +260,11 @@ onUnmounted(() => controller.abort());
                             :key="receipts[row.id].id"
                             :deployment-id="receipts[row.id].id"
                             :initial-status="receipts[row.id].status"
+                        />
+                        <DeploymentHistory
+                            v-if="historyEnvironmentId === row.id"
+                            :key="receipts[row.id]?.id ?? row.id"
+                            :environment-id="row.id"
                         />
                     </template>
                 </li>

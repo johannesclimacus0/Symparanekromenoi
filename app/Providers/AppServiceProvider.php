@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Enums\DeploymentLogStream;
 use App\Enums\DeploymentStatus;
 use Carbon\CarbonImmutable;
 use GraphQL\Type\Definition\PhpEnumType;
@@ -29,6 +30,9 @@ class AppServiceProvider extends ServiceProvider
         $this->configureDefaults();
         app(TypeRegistry::class)->register(
             new PhpEnumType(DeploymentStatus::class)
+        );
+        app(TypeRegistry::class)->register(
+            new PhpEnumType(DeploymentLogStream::class)
         );
     }
 
